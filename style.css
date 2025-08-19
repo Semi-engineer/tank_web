@@ -1,12 +1,26 @@
+:root {
+    --background-color: #333;
+    --font-color: white;
+    --canvas-bg-color: #6c8c5c;
+    --canvas-border-color: white;
+    --button-warn-bg: #f0ad4e;
+    --button-warn-border: #eea236;
+    --button-danger-bg: #d9534f;
+    --button-danger-border: #d43f3a;
+    --analog-stick-bg: rgba(85, 85, 85, 0.5);
+    --analog-stick-border: #888;
+    --analog-knob-bg: rgba(187, 187, 187, 0.7);
+    --analog-knob-border: #ddd;
+}
+
 body {
-    background-color: #333;
-    color: white;
+    background-color: var(--background-color);
+    color: var(--font-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: Arial, sans-serif;
-    /* ป้องกันการ scroll บนมือถือ */
-    overflow: hidden; 
+    overflow: hidden; /* Prevents scrolling on mobile */
 }
 
 .game-container {
@@ -14,9 +28,9 @@ body {
 }
 
 canvas {
-    background-color: #6c8c5c;
-    border: 3px solid white;
-    max-width: 100%; /* ทำให้ canvas ย่อตามขนาดจอ */
+    background-color: var(--canvas-bg-color);
+    border: 3px solid var(--canvas-border-color);
+    max-width: 100%;
     height: auto;
 }
 
@@ -30,70 +44,69 @@ canvas {
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    background-color: #f0ad4e;
-    border: 2px solid #eea236;
-    color: white;
+    background-color: var(--button-warn-bg);
+    border: 2px solid var(--button-warn-border);
+    color: var(--font-color);
     border-radius: 5px;
 }
 
-/* --- 👇 ส่วนควบคุมสำหรับมือถือ --- */
+/* --- Mobile Controls --- */
 #mobileControls {
-    display: none; /* ซ่อนเป็นค่าเริ่มต้นบนเดสก์ท็อป */
+    display: none;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* ทำให้คลิกทะลุ div นี้ได้ */
+    bottom: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* Container itself doesn't capture events */
 }
 
-#dpad, #mobileFireBtn {
+#analogStick {
     position: absolute;
     bottom: 20px;
-    opacity: 0.7;
-    pointer-events: auto; /* เปิดให้ปุ่มกดได้ */
-    -webkit-user-select: none; /* ป้องกันการเลือกข้อความบนปุ่ม */
-    user-select: none; /* ป้องกันการเลือกข้อความบนปุ่ม */
-    -webkit-tap-highlight-color: transparent; /* ลบเงาตอนกดบน iOS */
-}
-
-#dpad {
     left: 20px;
     width: 120px;
     height: 120px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    background-color: var(--analog-stick-bg);
+    border-radius: 50%;
+    border: 2px solid var(--analog-stick-border);
+    pointer-events: auto; /* Enable touch events for this element */
+    -webkit-user-select: none; /* For Safari and other WebKit browsers */
+    user-select: none;         /* Standard syntax */
+    -webkit-tap-highlight-color: transparent;
 }
 
-#dpad button {
-    background-color: #555;
-    color: white;
-    border: 1px solid #888;
-    font-size: 20px;
+#analogKnob {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: var(--analog-knob-bg);
+    border-radius: 50%;
+    border: 1px solid var(--analog-knob-border);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
-
-#mobileUp { grid-area: 1 / 2 / 2 / 3; }
-#mobileLeft { grid-area: 2 / 1 / 3 / 2; }
-#mobileRight { grid-area: 2 / 3 / 3 / 4; }
-#mobileDown { grid-area: 3 / 2 / 4 / 3; }
 
 #mobileFireBtn {
+    position: absolute;
+    bottom: 20px;
     right: 20px;
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: #d9534f;
-    border: 2px solid #d43f3a;
-    color: white;
+    background-color: var(--button-danger-bg);
+    border: 2px solid var(--button-danger-border);
+    color: var(--font-color);
     font-size: 18px;
     font-weight: bold;
+    opacity: 0.7;
+    pointer-events: auto; /* Enable touch events for this element */
+    -webkit-user-select: none; /* For Safari and other WebKit browsers */
+    user-select: none;         /* Standard syntax */
+    -webkit-tap-highlight-color: transparent;
 }
 
-
-/* Media Query: จะทำงานเมื่อความกว้างหน้าจอน้อยกว่าหรือเท่ากับ 768px */
+/* Show mobile controls on smaller screens */
 @media (max-width: 768px) {
     #mobileControls {
-        display: block; /* แสดงส่วนควบคุม */
+        display: block;
     }
 }
