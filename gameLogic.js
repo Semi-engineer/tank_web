@@ -1,8 +1,18 @@
 // --- GAME LOGIC ---
+
 function createExplosion(x, y, color) {
-    for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+    const particleCount = isTouchDevice ? CONFIG.PARTICLE_COUNT / 2 : CONFIG.PARTICLE_COUNT;
+    for (let i = 0; i < particleCount; i++) {
         gameState.particles.push(new Particle(x, y, color));
     }
+}
+
+// New function for random fireworks
+function createRandomFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const color = `hsl(${Math.random() * 360}, 100%, 75%)`; // Random vibrant color
+    createExplosion(x, y, color);
 }
 
 function spawnEnemies() {
@@ -45,7 +55,19 @@ function handleCollisions() {
 }
 
 function updateState(deltaTime) {
-    if (gameState.isGameOver) return;
+    // Always update particles for animations
+    gameState.particles.forEach(p => p.update(deltaTime));
+    gameState.particles = gameState.particles.filter(p => p.lifespan > 0);
+
+    // If game is over, only run animation logic
+    if (gameState.isGameOver) {
+        gameState.fireworksTimer += deltaTime;
+        if (gameState.fireworksTimer > gameState.fireworksInterval) {
+            createRandomFirework();
+            gameState.fireworksTimer = 0;
+        }
+        return; // Stop updating the rest of the game
+    }
     
     if (gameState.enemies.length === 0) {
         gameState.level++;
@@ -55,30 +77,43 @@ function updateState(deltaTime) {
     gameState.player?.update(deltaTime);
     gameState.enemies.forEach(e => e.update(deltaTime));
     gameState.bullets.forEach(b => b.update(deltaTime));
-    gameState.particles.forEach(p => p.update(deltaTime));
 
     handleCollisions();
 
     gameState.bullets = gameState.bullets.filter(b => b.x > 0 && b.x < canvas.width && b.y > 0 && b.y < canvas.height);
-    gameState.particles = gameState.particles.filter(p => p.lifespan > 0);
 }
 
-function renderGame() {
+function renderGame(deltaTime) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Always draw particles
+    gameState.particles.forEach(p => p.draw());
+
     if (gameState.isGameOver) {
+        ctx.save(); // Save context for screen shake
+        // Screen Shake Logic
+        if (gameState.shakeTimer > 0) {
+            const sx = (Math.random() - 0.5) * gameState.shakeMagnitude;
+            const sy = (Math.random() - 0.5) * gameState.shakeMagnitude;
+            ctx.translate(sx, sy);
+            gameState.shakeTimer -= deltaTime;
+        }
+
+        // Draw overlay and text
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2); // Fill extra space for shake
         ctx.fillStyle = 'red';
         ctx.font = '60px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+        
+        ctx.restore(); // Restore context after shake
         return;
     }
 
     gameState.player?.draw();
     gameState.enemies.forEach(e => e.draw());
     gameState.bullets.forEach(b => b.draw());
-    gameState.particles.forEach(p => p.draw());
 
     ctx.fillStyle = 'white';
     ctx.font = '24px Arial';
@@ -88,7 +123,14 @@ function renderGame() {
 }
 
 function gameOver() {
+    if (gameState.isGameOver) return; // Prevent this from running multiple times
+    
     gameState.isGameOver = true;
     gameState.player = null;
     restartBtn.style.display = 'block';
+
+    // Trigger the animations
+    gameState.shakeTimer = 500; // 0.5 seconds of shake
+    gameState.shakeMagnitude = 10;
+    gameState.fireworksTimer = 0;
 }

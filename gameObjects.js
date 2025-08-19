@@ -13,15 +13,16 @@ class Particle extends GameObject {
     constructor(x, y, color) {
         super(x, y, Math.random() * 3 + 1);
         this.color = color;
-        this.velocity = { x: (Math.random() - 0.5) * 4, y: (Math.random() - 0.5) * 4 };
-        this.lifespan = CONFIG.PARTICLE_LIFESPAN;
+        this.velocity = { x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 6 };
+        this.lifespan = Math.random() * 500 + 500; // Lifespan in milliseconds (0.5 to 1 second)
+        this.initialLifespan = this.lifespan;
         this.opacity = 1;
     }
-    update() {
+    update(deltaTime) {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
-        this.lifespan--;
-        this.opacity = Math.max(0, this.lifespan / CONFIG.PARTICLE_LIFESPAN);
+        this.lifespan -= deltaTime;
+        this.opacity = Math.max(0, this.lifespan / this.initialLifespan);
     }
     draw() {
         ctx.save();
@@ -33,7 +34,6 @@ class Particle extends GameObject {
         ctx.restore();
     }
 }
-
 class Bullet extends GameObject {
     constructor(x, y, angle, owner) {
         super(x, y, 5);
@@ -159,17 +159,37 @@ class Tank extends GameObject {
     draw() {
         ctx.save();
         ctx.translate(this.x, this.y);
+
+        // --- Draw Body and Tracks ---
         ctx.rotate(this.angle);
+
+        // Tracks (darker shade)
+        ctx.fillStyle = '#444';
+        ctx.fillRect(-this.width / 2 - 6, -this.height / 2, 12, this.height); // Left track
+        ctx.fillRect(this.width / 2 - 6, -this.height / 2, 12, this.height); // Right track
+        
+        // Main Body
         ctx.fillStyle = this.color;
         ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-        ctx.rotate(-this.angle);
+        
+        // --- Draw Turret ---
+        ctx.rotate(-this.angle); // Un-rotate for the turret
+
+        // Turret Base (darker)
+        ctx.fillStyle = '#666';
         ctx.beginPath();
-        ctx.arc(0, 0, this.width / 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'darkgrey';
+        ctx.arc(0, 0, this.width / 2.2, 0, Math.PI * 2);
         ctx.fill();
+
+        // Turret Cannon
         ctx.rotate(this.turretAngle);
-        ctx.fillStyle = 'grey';
-        ctx.fillRect(-5, -this.height / 2 - 15, 10, 35);
+        ctx.fillStyle = '#444';
+        ctx.fillRect(-6, -this.height / 2 - 20, 12, 40);
+
+        // Cannon Tip (darkest)
+        ctx.fillStyle = '#222';
+        ctx.fillRect(-6, -this.height / 2 - 25, 12, 5);
+        
         ctx.restore();
     }
 }

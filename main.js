@@ -16,6 +16,12 @@ let gameState = {
     level: 1,
     isGameOver: false,
     gameLoopId: null,
+
+    // Properties for Game Over animation
+    shakeTimer: 0,
+    shakeMagnitude: 0,
+    fireworksTimer: 0,
+    fireworksInterval: 150, // ms between each firework
 };
 
 // --- INSTANTIATE INPUT HANDLER ---
