@@ -5,9 +5,95 @@ body {
     flex-direction: column;
     align-items: center;
     font-family: Arial, sans-serif;
+    /* ป้องกันการ scroll บนมือถือ */
+    overflow: hidden; 
+}
+
+.game-container {
+    position: relative;
 }
 
 canvas {
-    background-color: #6c8c5c; /* สีพื้นหลังสนามรบ */
+    background-color: #6c8c5c;
     border: 3px solid white;
+    max-width: 100%; /* ทำให้ canvas ย่อตามขนาดจอ */
+    height: auto;
+}
+
+#restartBtn {
+    display: none;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #f0ad4e;
+    border: 2px solid #eea236;
+    color: white;
+    border-radius: 5px;
+}
+
+/* --- 👇 ส่วนควบคุมสำหรับมือถือ --- */
+#mobileControls {
+    display: none; /* ซ่อนเป็นค่าเริ่มต้นบนเดสก์ท็อป */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* ทำให้คลิกทะลุ div นี้ได้ */
+}
+
+#dpad, #mobileFireBtn {
+    position: absolute;
+    bottom: 20px;
+    opacity: 0.7;
+    pointer-events: auto; /* เปิดให้ปุ่มกดได้ */
+    -webkit-user-select: none; /* ป้องกันการเลือกข้อความบนปุ่ม */
+    user-select: none; /* ป้องกันการเลือกข้อความบนปุ่ม */
+    -webkit-tap-highlight-color: transparent; /* ลบเงาตอนกดบน iOS */
+}
+
+#dpad {
+    left: 20px;
+    width: 120px;
+    height: 120px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+#dpad button {
+    background-color: #555;
+    color: white;
+    border: 1px solid #888;
+    font-size: 20px;
+}
+
+#mobileUp { grid-area: 1 / 2 / 2 / 3; }
+#mobileLeft { grid-area: 2 / 1 / 3 / 2; }
+#mobileRight { grid-area: 2 / 3 / 3 / 4; }
+#mobileDown { grid-area: 3 / 2 / 4 / 3; }
+
+#mobileFireBtn {
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #d9534f;
+    border: 2px solid #d43f3a;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* Media Query: จะทำงานเมื่อความกว้างหน้าจอน้อยกว่าหรือเท่ากับ 768px */
+@media (max-width: 768px) {
+    #mobileControls {
+        display: block; /* แสดงส่วนควบคุม */
+    }
 }

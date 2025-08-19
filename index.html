@@ -8,7 +8,20 @@
 </head>
 <body>
     <h1>2D Tank Battle</h1>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <button id="restartBtn">Restart Game</button>
+        
+        <div id="mobileControls">
+            <div id="dpad">
+                <button id="mobileUp">▲</button>
+                <button id="mobileLeft">◄</button>
+                <button id="mobileRight">►</button>
+                <button id="mobileDown">▼</button>
+            </div>
+            <button id="mobileFireBtn">FIRE</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
